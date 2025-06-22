@@ -18,6 +18,7 @@ void solve(){
     aristas.push_back({a,b,x});
   }
   dist[0] = 0;
+  //Como un Dijkstra, vas "apuntando" las distancias a los nodos, en este caso, la distancia mayor posible.
   for(int i = 0;i<n-1;i++){
     for(auto [u,v,c] : aristas){
       if(dist[u] != LLONG_MIN && dist[u] + c > dist[v]){
@@ -25,12 +26,14 @@ void solve(){
       }
     }
   }
+  //Después detectamos/buscamos si existe algún ciclo.
   vector<bool> ciclo(n,false);
   for(auto [u,v,c] : aristas){
     if(dist[u] != LLONG_MIN && dist[u] + c > dist[v]){
       ciclo[v] = true;
     }
   }
+  //Por último, si se da el caso que existe un ciclo, miramos si, en este caso n-1, se ve afectado.
   for(int i = 0;i<n;i++){
     if(ciclo[i]){
       for(auto [u, v, c] : aristas){
@@ -38,12 +41,12 @@ void solve(){
       }
     }
   }
+  //Si se ve afectado imprimimos -1 (infinito) y sino, la distancia a este.
   ciclo[n-1] ? cout << -1 : cout << dist[n-1];
   cout << endl;
 }
 int main(){
   long long t;
-  //cin >> t;
   t = 1;
   for(int i = 0;i<t;i++){
     solve();
