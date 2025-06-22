@@ -1,12 +1,19 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+//Calcula la distancia mínima para pasar de un string a otro (Recursivamente).
 long long Levenshtein(const string &x, const string &y, int i, int j, vector<vector<long long>> &dp) {
+    //Si i o j están vacios, se necesitan j y i inserciones (respectivamente). Caso base.
     if (i == 0) return j;
     if (j == 0) return i;
-    if (dp[i][j] != -1) return dp[i][j];
 
+    //Si ya está calculado lo devolvemos (Memoización).
+    if (dp[i][j] != -1) return dp[i][j];
+    
+    //Si coinciden no hacemos nada.
     if (x[i - 1] == y[j - 1]) dp[i][j] = Levenshtein(x, y, i - 1, j - 1, dp);
+
+    //Si no coindiciden la distancia será la mínima distancia entre el remplazo, la inserción o la eliminación (respectivamente), más uno.
     else dp[i][j] = 1 + min({Levenshtein(x, y, i - 1, j - 1, dp), Levenshtein(x, y, i, j - 1, dp), Levenshtein(x, y, i - 1, j, dp)});   
     
     return dp[i][j];
@@ -21,7 +28,6 @@ void solve() {
 
 int main() {
     long long t;
-    //cin >> t;
     t = 1;
     for (int i = 0; i < t; i++) {
         solve();
