@@ -2,44 +2,57 @@
 using namespace std;
 
 typedef long long ll;
-vector<ll> nodoPadre;
 
-void make_set(int v) {
-    nodoPadre[v] = v;
+//Crea los conjuntos.
+template<typename T>
+void make_set(vector<T> &dsu, vector<T> &size, T v) {
+  dsu[v] = v;
+  size[v] = 1;
 }
 
-int find_set(int v) {
-    if (v == nodoPadre[v]) return v;
-    return find_set(nodoPadre[v]);
+//Busca el "padre"/conjunto de un nodo.
+template<typename T>
+int find_set(vector<T> &dsu, T v) {
+  if (v == dsu[v]) return v;
+  return dsu[v] = find_set(dsu, dsu[v]);
 }
 
-void union_sets(int a, int b) {
-    a = find_set(a);
-    b = find_set(b);
-    if (a != b) nodoPadre[b] = a;
+//Une dos conjuntos. El que más tamaño tenga será el padre.
+template<typename T>
+void union_sets(vector<T> &dsu, vector<T> &size, T a, T b) {
+  a = find_set(dsu, a);
+  b = find_set(dsu, b);
+  if (a != b) {
+    if (size[a] < size[b]) swap(a, b);
+    dsu[b] = a;
+    size[a] += size[b];
+  }
 }
+
 void solve() {
   int n, m;
   cin >> n;
   cin >> m;
-  nodoPadre = vector<ll>(n+1);
+  vector<ll> dsu(n);
+  vector<ll> size(n);
+
+  //Crea los sets inicialmente siendo el padre el mismo nodo y con tamaño 1.
+  for(ll i = 0;i<n;i++){
+    make_set(dsu,size,i);
+  }
   set<ll> grupos;
-  for(int i = 1;i<m+1;i++){
+  for(int i = 0;i<m;i++){
     ll a, b;
     cin >> a >> b;
-    make_set(a);
-    make_set(b);
-    union_sets(a,b);
+    a--,b--;
+    union_sets(dsu, size, a, b);
   }
-  for(int i = 1;i<nodoPadre.size();i++){
-    grupos.insert(find_set(nodoPadre[i]));
+  //guardamos en un set los conjuntos o, lo que es lo mismo, los padres de estos.
+  for(int i = 0;i<dsu.size();i++){
+    grupos.insert(dsu[i]);
   }
-  grupos.erase(0);
   cout << grupos.size()-1 << endl;
-  for(ll x : grupos){
-    /*if(x != 1){
-      cout << 1 << " " << x << endl;
-    }*/
+  for(ll x : grupos){ 
     cout << x << endl;
   } 
   
